@@ -675,8 +675,10 @@ std::vector<int64_t> TrtllmGenBatchedGemmRunner::getValidConfigIndices(
     }
   }
 
-  FLASHINFER_CHECK(!validConfigIndices.empty(),
-                   "No valid config found for the given problem shape");
+  if (validConfigIndices.empty()) {
+    throw NoValidConfigError(__FUNCTION__, __FILE__, __LINE__,
+                             "No valid config found for the given problem shape");
+  }
 
   return validConfigIndices;
 }
@@ -701,8 +703,9 @@ int64_t TrtllmGenBatchedGemmRunner::getDefaultValidConfigIndex(
   throw NoLoadableKernelError(
       __FUNCTION__, __FILE__, __LINE__,
       "All " + std::to_string(validConfigIndices.size()) +
-          " configs valid for this problem shape have cubins that do not load on this driver "
-          "(GitHub #5322)");
+          " configs valid for this problem shape have cubins that do not load on this driver, "
+          "the first in priority order being " +
+          std::string(configs[validConfigIndices.front()].mFunctionName) + " (GitHub #5322)");
 }
 
 bool TrtllmGenBatchedGemmRunner::isValidConfigIndex(int32_t configIndex, int32_t m, int32_t n,
