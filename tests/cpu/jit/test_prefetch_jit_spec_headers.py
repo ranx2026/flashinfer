@@ -82,6 +82,10 @@ def test_prefetch_stops_on_failed_or_unlisted_artifacts(prefetch, failure):
     assert len(calls) == (2 if failure == "header" else 1)
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="runs the bash CI helper scripts/infra/jit_cache_build_common.sh",
+)
 @pytest.mark.parametrize(
     ("concurrency", "providers", "prefetch_status", "expected_status"),
     [
