@@ -269,7 +269,7 @@ def test_two_rank_preparation_failures_do_not_enter_peer_launch(tmp_path):
 
     if not dist.is_available() or not dist.is_gloo_available():
         pytest.skip("requires the CPU Gloo process-group backend")
-    environment = dict(os.environ, CUDA_VISIBLE_DEVICES="", OMP_NUM_THREADS="1")
+    environment = dict(os.environ, CUDA_VISIBLE_DEVICES="-1", OMP_NUM_THREADS="1")
     environment.pop("MEGA_NO_DIST", None)
     completed = subprocess.run(
         [sys.executable, __file__, "--worker", str(tmp_path)],
